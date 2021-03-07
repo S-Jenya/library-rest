@@ -28,5 +28,9 @@ public class AdminService {
         roleRepository.updRoleName(nameRole, id);
     }
 
+    public Role getUserRoleByName(String name) {
+        return roleRepository.findByNameCustomQuery(name);
+    }
+
 
 }
