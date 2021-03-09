@@ -10,8 +10,14 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -20,6 +26,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
     private PasswordEncoder passwordEncoder;
     private UserAuthService userAuthService;
+
+    @Autowired
+    private CustomAuthenticationProvider authProvider;
 
     @Autowired
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
@@ -33,7 +42,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(authenticationProvider());
+       // auth.authenticationProvider(authenticationProvider());
+        auth.authenticationProvider(authProvider);
     }
 
 
@@ -52,19 +62,38 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/login").permitAll()
-                .antMatchers("/registration").permitAll()
-                .antMatchers("/admin/**").permitAll()
+                .antMatchers("/registration/**").permitAll()
+                .antMatchers("/admin/**").hasAuthority("ADMIN")
                 .antMatchers("/admin/updRole").permitAll()
-//                .anyRequest().authenticated()
+                .anyRequest().authenticated()
                 .and()
-                .formLogin()
+                .formLogin().permitAll()
                 .loginPage("/login")
-                .loginProcessingUrl("/authenticateTheUser")
+                .usernameParameter("login")
+                .passwordParameter("password")
+                .loginProcessingUrl("/perform_login")
+                .defaultSuccessUrl("/", true)
+                .failureUrl("/login?error=true")
                 .and()
                 .logout()
                 .logoutSuccessUrl("/login")
                 .permitAll();
     }
+
+    @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        return new CustomAuthenticationFailureHandler();
+    }
+
+    /*@Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4000"));
+        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }*/
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -72,5 +101,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .allowedOrigins("http://localhost:4000")
                 .allowedMethods("*");
     }
+
+
 
 }

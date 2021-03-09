@@ -8,32 +8,32 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "myUser")
+@Table(
+        name = "myUser"
+        /*, uniqueConstraints = {
+                @UniqueConstraint(name = "user_email_unique", columnNames = "email")
+        }*/
+)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idUser")
     private Long idUser;
 
-    @Column(
-            name = "name",
-            unique = true
-    )
+    @Column(name = "name")
     private String name;
 
-    @Column(
-            name = "email",
-            unique = true
-    )
+    @Column(name = "email")
     private String email;
 
     @Column(name = "password")
     private String password;
 
     @ManyToOne
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     @JoinColumn(name = "idRole", nullable = false)
     private Role role;
 
+    public void setRole(Role role) {
+        this.role = role;
+    }
 }

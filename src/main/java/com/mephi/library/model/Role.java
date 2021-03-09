@@ -8,23 +8,24 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "myRole")
+@Table(
+        name = "myRole",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "role_name_unique", columnNames = "name")}
+)
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idRole")
     private Long idRole;
 
-    @Column(
-            name = "name",
-            unique = true
-    )
+    @Column(name = "name")
     private String name;
 
     @OneToMany(
             mappedBy = "role",
             cascade = CascadeType.ALL,
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             orphanRemoval = true)
     @JsonIgnore
     private List<User> users;

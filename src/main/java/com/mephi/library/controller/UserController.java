@@ -33,6 +33,7 @@ public class UserController {
             user.setPassword(passwordEncoder.encode(data.getPassword()));
             user.setRole(role);
             userService.createUser(user);
+            System.out.println("Пользователь создан");
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
