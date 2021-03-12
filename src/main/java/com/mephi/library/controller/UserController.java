@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 //@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @RestController
+//@CrossOrigin(origins = "http://localhost:4000")
 public class UserController {
 
     private final UserService userService;
@@ -49,7 +50,7 @@ public class UserController {
     public void createUser(@RequestBody UserRegistration data){
         try {
             User user = new User();
-            Role role = adminService.getUserRoleByName("USER");
+            Role role = adminService.getUserRoleByName("ROLE_USER");
             user.setName(data.getName());
             user.setEmail(data.getEmail());
             user.setPassword(passwordEncoder.encode(data.getPassword()));
@@ -75,7 +76,7 @@ public class UserController {
         final String jwt = jwtTokenUtil.generateToken(userDetails);
         List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
 
-        AuthenticationResponse response = new AuthenticationResponse(userDetails.getIdUser(), userDetails.getEmail(), roles, jwt);
+        AuthenticationResponse response = new AuthenticationResponse(userDetails.getIdUser(), userDetails.getUsername(), userDetails.getEmail(), roles, jwt);
 
         return ResponseEntity.ok().body(response);
     }

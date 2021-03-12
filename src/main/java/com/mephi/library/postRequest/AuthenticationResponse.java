@@ -5,16 +5,22 @@ import java.util.List;
 
 public class AuthenticationResponse implements Serializable {
 
-    private final String jwt;
-    private final String name;
     private final Long idUser;
+    private final String name;
+    private final String email;
     private final List<String> roles;
+    private final String jwt;
 
-    public AuthenticationResponse(Long idUser, String name, List<String> roles, String jwt) {
+    public AuthenticationResponse(Long idUser, String name, String email, List<String> roles, String jwt) {
         this.idUser = idUser;
         this.name = name;
-        this.jwt = jwt;
+        this.email = email;
         this.roles = roles;
+        this.jwt = jwt;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public Long getIdUser() {
