@@ -1,6 +1,7 @@
 package com.mephi.library.controller;
 
 import com.mephi.library.model.Role;
+import com.mephi.library.model.User;
 import com.mephi.library.postRequest.Data;
 import com.mephi.library.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,12 @@ public class AdminController {
     public List<Role> getAllRole() {
         List<Role> role = adminService.FindAllRole();
         return role;
+    }
+
+    @GetMapping("/admin/getUsers")
+    public List<User> getUsers() {
+        List<User> users = adminService.FindAllUser();
+        return users;
     }
 
     @RequestMapping(value = "/admin/addRole", method = RequestMethod.POST)

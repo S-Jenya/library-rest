@@ -1,5 +1,6 @@
 package com.mephi.library.controller;
 
+import com.mephi.library.email.EmailService;
 import com.mephi.library.model.Role;
 import com.mephi.library.model.User;
 import com.mephi.library.postRequest.AuthenticationRequest;
@@ -35,28 +36,31 @@ public class UserController {
     private AuthenticationManager authenticate;
     private JwtUtil jwtTokenUtil;
     private UserAuthService userDetailsService;
+    private EmailService emailService;
 
     @Autowired
-    public UserController(UserService userService, BCryptPasswordEncoder passwordEncoder, AdminService adminService, AuthenticationManager authenticate, JwtUtil jwtTokenUtil, UserAuthService userDetailsService) {
+    public UserController(UserService userService, BCryptPasswordEncoder passwordEncoder, AdminService adminService, AuthenticationManager authenticate, JwtUtil jwtTokenUtil, UserAuthService userDetailsService, EmailService emailService) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.adminService = adminService;
         this.authenticate = authenticate;
         this.jwtTokenUtil = jwtTokenUtil;
         this.userDetailsService = userDetailsService;
+        this.emailService = emailService;
     }
 
     @RequestMapping(value="/registration/createUser", method= RequestMethod.POST)
     public void createUser(@RequestBody UserRegistration data){
         try {
             User user = new User();
-            Role role = adminService.getUserRoleByName("ROLE_USER");
+            Role role = adminService.getUserRoleByName("USER");
             user.setName(data.getName());
             user.setEmail(data.getEmail());
+            user.setLogin(data.getLogin());
             user.setPassword(passwordEncoder.encode(data.getPassword()));
             user.setRole(role);
             userService.createUser(user);
-            System.out.println("Пользователь создан");
+           // emailService.sendSimpleMessage(user.getEmail(), "Регистрация в онлайн библиотеке", "Регистрация успешно пройдена!");
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
@@ -66,17 +70,22 @@ public class UserController {
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
 
         try {
-            authenticate.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getName(), authenticationRequest.getPassword()));
+            authenticate.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getLogin(), authenticationRequest.getPassword()));
         } catch (BadCredentialsException e) {
 //            throw new Exception("Неверное имя пользователя или пароль", e);
              return ResponseEntity.badRequest().body(new MessageResponse("Неверный логин или пароль!"));
         }
-        final MyUserDetails userDetails = (MyUserDetails) userDetailsService.loadUserByUsername(authenticationRequest.getName());
+        final MyUserDetails userDetails = (MyUserDetails) userDetailsService.loadUserByUsername(authenticationRequest.getLogin());
 
         final String jwt = jwtTokenUtil.generateToken(userDetails);
         List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
 
-        AuthenticationResponse response = new AuthenticationResponse(userDetails.getIdUser(), userDetails.getUsername(), userDetails.getEmail(), roles, jwt);
+        AuthenticationResponse response = new AuthenticationResponse(userDetails.getIdUser(),
+                userDetails.getUsername(),
+                userDetails.getLogin(),
+                userDetails.getEmail(),
+                roles,
+                jwt);
 
         return ResponseEntity.ok().body(response);
     }

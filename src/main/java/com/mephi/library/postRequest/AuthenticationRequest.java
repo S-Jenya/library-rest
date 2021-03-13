@@ -3,15 +3,15 @@ package com.mephi.library.postRequest;
 import java.io.Serializable;
 
 public class AuthenticationRequest implements Serializable {
-    private String name;
+    private String login;
     private String password;
 
-    public String getName() {
-        return name;
+    public String getLogin() {
+        return login;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setLogin(String login) {
+        this.login = login;
     }
 
     public String getPassword() {
@@ -28,8 +28,8 @@ public class AuthenticationRequest implements Serializable {
 
     }
 
-    public AuthenticationRequest(String name, String password) {
-        this.setName(name);
+    public AuthenticationRequest(String login, String password) {
+        this.setLogin(login);
         this.setPassword(password);
     }
 }

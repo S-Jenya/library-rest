@@ -1,5 +1,6 @@
 package com.mephi.library.JWTutil;
 
+import com.mephi.library.security.MyUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -35,9 +36,9 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(MyUserDetails myUserDetails) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userDetails.getUsername());
+        return createToken(claims, myUserDetails.getLogin());
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
@@ -47,8 +48,8 @@ public class JwtUtil {
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
+    public Boolean validateToken(String token, MyUserDetails userDetails) {
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        return (username.equals(userDetails.getLogin()) && !isTokenExpired(token));
     }
 }

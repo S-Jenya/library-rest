@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @Query("select u from User u where u.name = ?1")
+    @Query("select u from User u where u.login = ?1")
     User findByNameCustomQuery(String s);
 }

@@ -1,5 +1,6 @@
 package com.mephi.library.JWTutil;
 
+import com.mephi.library.security.MyUserDetails;
 import com.mephi.library.security.UserAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,7 +20,7 @@ import java.io.IOException;
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Autowired
-    private UserAuthService userDetailsService;
+    private UserAuthService userAuthService;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -41,12 +42,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            MyUserDetails myUserDetails = (MyUserDetails) userAuthService.loadUserByUsername(username);
 
-            if (jwtUtil.validateToken(jwt, userDetails)) {
+            if (jwtUtil.validateToken(jwt, myUserDetails)) {
 
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                        new UsernamePasswordAuthenticationToken(myUserDetails, null, myUserDetails.getAuthorities());
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
