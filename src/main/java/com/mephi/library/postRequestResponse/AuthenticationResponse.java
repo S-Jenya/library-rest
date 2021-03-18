@@ -1,4 +1,4 @@
-package com.mephi.library.postRequest;
+package com.mephi.library.postRequestResponse;
 
 import java.io.Serializable;
 import java.util.List;

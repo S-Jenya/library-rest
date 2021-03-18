@@ -1,4 +1,4 @@
-package com.mephi.library.postRequest;
+package com.mephi.library.postRequestResponse;
 
 public class MessageResponse {
     private String message;

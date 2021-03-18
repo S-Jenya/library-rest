@@ -1,92 +1,59 @@
 package com.mephi.library.controller;
 
-import com.mephi.library.email.EmailService;
 import com.mephi.library.model.Role;
 import com.mephi.library.model.User;
-import com.mephi.library.postRequest.AuthenticationRequest;
-import com.mephi.library.postRequest.AuthenticationResponse;
-import com.mephi.library.postRequest.MessageResponse;
-import com.mephi.library.postRequest.UserRegistration;
-import com.mephi.library.security.MyUserDetails;
-import com.mephi.library.security.UserAuthService;
+import com.mephi.library.postRequestResponse.Data;
 import com.mephi.library.service.AdminService;
-import com.mephi.library.service.UserService;
-import com.mephi.library.JWTutil.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-
-//@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @RestController
 //@CrossOrigin(origins = "http://localhost:4000")
 public class UserController {
 
-    private final UserService userService;
-    private final BCryptPasswordEncoder passwordEncoder;
     private final AdminService adminService;
 
-    private AuthenticationManager authenticate;
-    private JwtUtil jwtTokenUtil;
-    private UserAuthService userDetailsService;
-    private EmailService emailService;
-
     @Autowired
-    public UserController(UserService userService, BCryptPasswordEncoder passwordEncoder, AdminService adminService, AuthenticationManager authenticate, JwtUtil jwtTokenUtil, UserAuthService userDetailsService, EmailService emailService) {
-        this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
+    public UserController(AdminService adminService) {
         this.adminService = adminService;
-        this.authenticate = authenticate;
-        this.jwtTokenUtil = jwtTokenUtil;
-        this.userDetailsService = userDetailsService;
-        this.emailService = emailService;
     }
 
-    @RequestMapping(value="/registration/createUser", method= RequestMethod.POST)
-    public void createUser(@RequestBody UserRegistration data){
-        try {
-            User user = new User();
-            Role role = adminService.getUserRoleByName("USER");
-            user.setName(data.getName());
-            user.setEmail(data.getEmail());
-            user.setLogin(data.getLogin());
-            user.setPassword(passwordEncoder.encode(data.getPassword()));
-            user.setRole(role);
-            userService.createUser(user);
-           // emailService.sendSimpleMessage(user.getEmail(), "Регистрация в онлайн библиотеке", "Регистрация успешно пройдена!");
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
+    @GetMapping("/admin/getRole")
+    public List<Role> getAllRole() {
+        List<Role> role = adminService.FindAllRole();
+        return role;
     }
 
-    @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+    @GetMapping("/admin/getUsers")
+    public List<User> getUsers() {
+        List<User> users = adminService.FindAllUser();
+        return users;
+    }
 
-        try {
-            authenticate.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getLogin(), authenticationRequest.getPassword()));
-        } catch (BadCredentialsException e) {
-//            throw new Exception("Неверное имя пользователя или пароль", e);
-             return ResponseEntity.badRequest().body(new MessageResponse("Неверный логин или пароль!"));
-        }
-        final MyUserDetails userDetails = (MyUserDetails) userDetailsService.loadUserByUsername(authenticationRequest.getLogin());
+    @RequestMapping(value = "/admin/addRole", method = RequestMethod.POST)
+    public void addRole(@RequestBody Data data) {
+        Role role = new Role();
+        role.setName(data.getName());
+        adminService.saveRole(role);
+    }
 
-        final String jwt = jwtTokenUtil.generateToken(userDetails);
-        List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
+    @RequestMapping(value = "/admin/updRole", method = RequestMethod.POST)
+    public void updRole(@RequestBody Data data) {
+        adminService.updateRoleName(data.getName(), data.getId());
+    }
 
-        AuthenticationResponse response = new AuthenticationResponse(userDetails.getIdUser(),
-                userDetails.getUsername(),
-                userDetails.getLogin(),
-                userDetails.getEmail(),
-                roles,
-                jwt);
+    @GetMapping("/usertest")
+    @PreAuthorize("hasRole('USER')")
+    public String moderatorAccess() {
+        return "USER Board.";
+    }
 
-        return ResponseEntity.ok().body(response);
+    @GetMapping("/admintest")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String adminAccess() {
+        return "ADMIN Board.";
     }
 }
