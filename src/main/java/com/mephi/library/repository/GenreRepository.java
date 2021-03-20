@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Repository
 public interface GenreRepository extends JpaRepository<Genre, Long> {
@@ -18,4 +19,6 @@ public interface GenreRepository extends JpaRepository<Genre, Long> {
 
     @Query("select g from Genre g where g.idGenre = ?1")
     Genre findGenreByIdCustomQuery(Long idGenre);
+
+    Genre findGenreByName(String name);
 }

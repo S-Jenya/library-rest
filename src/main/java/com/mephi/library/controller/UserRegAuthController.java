@@ -5,7 +5,7 @@ import com.mephi.library.model.Role;
 import com.mephi.library.model.User;
 import com.mephi.library.postRequestResponse.AuthenticationRequest;
 import com.mephi.library.postRequestResponse.AuthenticationResponse;
-import com.mephi.library.postRequestResponse.MessageResponse;
+import com.mephi.library.postRequestResponse.response.MessageResponse;
 import com.mephi.library.postRequestResponse.UserRegistration;
 import com.mephi.library.security.MyUserDetails;
 import com.mephi.library.security.UserAuthService;

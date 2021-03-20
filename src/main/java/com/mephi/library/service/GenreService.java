@@ -29,4 +29,8 @@ public class GenreService {
     public Genre findGenreById(Long idGenre) {
         return genreRepository.findGenreByIdCustomQuery(idGenre);
     }
+
+    public Genre findGenreByName(String name) {
+        return genreRepository.findGenreByName(name);
+    }
 }

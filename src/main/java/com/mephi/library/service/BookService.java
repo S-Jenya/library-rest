@@ -4,6 +4,8 @@ import com.mephi.library.model.Book;
 import com.mephi.library.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.stream.Stream;
+
 @Service
 public class BookService {
     private final BookRepository bookRepository;
@@ -14,5 +16,13 @@ public class BookService {
 
     public void saveBook(Book book) {
         bookRepository.save(book);
+    }
+
+    public Stream<Book> getAllBook() {
+        return bookRepository.findAll().stream();
+    }
+
+    public Book getFile(Long id) {
+        return bookRepository.findById(id).get();
     }
 }
