@@ -1,6 +1,7 @@
 package com.mephi.library.service;
 
 import com.mephi.library.model.Book;
+import com.mephi.library.model.Genre;
 import com.mephi.library.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
@@ -24,5 +25,9 @@ public class BookService {
 
     public Book getFile(Long id) {
         return bookRepository.findById(id).get();
+    }
+
+    public Long countBookByGenre(Genre genre) {
+        return bookRepository.countBookByGenre(genre);
     }
 }

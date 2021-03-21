@@ -33,4 +33,8 @@ public class GenreService {
     public Genre findGenreByName(String name) {
         return genreRepository.findGenreByName(name);
     }
+
+    public void deleteGenreById(Long id) {
+        genreRepository.deleteById(id);
+    }
 }
