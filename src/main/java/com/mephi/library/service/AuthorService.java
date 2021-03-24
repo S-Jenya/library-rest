@@ -29,5 +29,9 @@ public class AuthorService {
     public Author getAuthorById(Long idAuthor) {
         return authorRepository.getAuthorByIdAuthor(idAuthor);
     }
+
+    public void deleteAuthorById(Long idAuthor) {
+        authorRepository.deleteById(idAuthor);
+    }
 }
 

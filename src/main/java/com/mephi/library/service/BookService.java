@@ -1,5 +1,6 @@
 package com.mephi.library.service;
 
+import com.mephi.library.model.Author;
 import com.mephi.library.model.Book;
 import com.mephi.library.model.Genre;
 import com.mephi.library.repository.BookRepository;
@@ -29,5 +30,9 @@ public class BookService {
 
     public Long countBookByGenre(Genre genre) {
         return bookRepository.countBookByGenre(genre);
+    }
+
+    public Long countBookByAuthor(Author author) {
+        return bookRepository.countBookByAuthor(author);
     }
 }
