@@ -1,8 +1,10 @@
 package com.mephi.library.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Data
 @Entity
@@ -35,4 +37,18 @@ public class Book {
     @ManyToOne
     @JoinColumn(name = "idAuthor", nullable = false)
     private Author author;
+
+    public boolean imageIsExist() {
+        if(this.getImage() == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /*@ManyToMany(cascade = { CascadeType.ALL },
+            fetch = FetchType.EAGER,
+            mappedBy = "myUser")*/
+//    @JsonIgnore
+//    private User user;
 }

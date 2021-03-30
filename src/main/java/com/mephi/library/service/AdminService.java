@@ -2,6 +2,7 @@ package com.mephi.library.service;
 
 import com.mephi.library.model.Role;
 import com.mephi.library.model.User;
+import com.mephi.library.postRequestResponse.response.UserInfo;
 import com.mephi.library.repository.RoleRepository;
 import com.mephi.library.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

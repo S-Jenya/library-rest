@@ -14,7 +14,7 @@ import java.util.List;
         uniqueConstraints = {
                 @UniqueConstraint(
                         name = "author_name_unique",
-                        columnNames = {"firstName", "lastName", "patronymic"}
+                        columnNames = {"lastName", "firstName", "patronymic"}
                 )
         }
 )
@@ -24,13 +24,13 @@ public class Author {
     @Column(name = "idAuthor")
     private Long idAuthor;
 
-    @NotBlank(message = "Поле \"firstName\" не может быть пустым")
-    @Column(name = "firstName")
-    private String firstName;
-
     @NotBlank(message = "Поле \"lastName\" не может быть пустым")
     @Column(name = "lastName")
     private String lastName;
+
+    @NotBlank(message = "Поле \"firstName\" не может быть пустым")
+    @Column(name = "firstName")
+    private String firstName;
 
     @NotBlank(message = "Поле \"patronymic\" не может быть пустым")
     @Column(name = "patronymic")

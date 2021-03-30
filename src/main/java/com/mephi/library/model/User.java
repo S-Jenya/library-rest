@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Data
 @Entity
@@ -36,6 +37,14 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "idRole", nullable = false)
     private Role role;
+
+    @ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "UserBook",
+            joinColumns = { @JoinColumn(name = "idUser") },
+            inverseJoinColumns = { @JoinColumn(name = "idBook") }
+    )
+    private Set<Book> books;
 
     public void setRole(Role role) {
         this.role = role;

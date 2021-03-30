@@ -3,6 +3,7 @@ package com.mephi.library.controller;
 import com.mephi.library.model.Role;
 import com.mephi.library.model.User;
 import com.mephi.library.postRequestResponse.Data;
+import com.mephi.library.postRequestResponse.response.UserInfo;
 import com.mephi.library.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
