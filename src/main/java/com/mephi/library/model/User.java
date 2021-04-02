@@ -49,4 +49,8 @@ public class User {
     public void setRole(Role role) {
         this.role = role;
     }
+
+    public void addBook(Book book) {
+        this.books.add(book);
+    }
 }

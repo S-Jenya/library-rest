@@ -3,12 +3,12 @@ package com.mephi.library.controller;
 import com.mephi.library.model.Author;
 import com.mephi.library.model.Book;
 import com.mephi.library.model.Genre;
-import com.mephi.library.postRequestResponse.DB.BookDB;
-import com.mephi.library.postRequestResponse.response.BookResponceTwo;
+import com.mephi.library.model.User;
 import com.mephi.library.postRequestResponse.response.bookResponse;
 import com.mephi.library.service.AuthorService;
 import com.mephi.library.service.BookService;
 import com.mephi.library.service.GenreService;
+import com.mephi.library.service.UserService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,11 +26,13 @@ public class BookController {
     private final GenreService genreService;
     private final AuthorService authorService;
     private final BookService bookService;
+    private final UserService userService;
 
-    public BookController(GenreService genreService, AuthorService authorService, BookService bookService) {
+    public BookController(GenreService genreService, AuthorService authorService, BookService bookService, UserService userService) {
         this.genreService = genreService;
         this.authorService = authorService;
         this.bookService = bookService;
+        this.userService = userService;
     }
 
     @PostMapping(value = "/admin/uploadBook")
@@ -109,14 +108,14 @@ public class BookController {
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }*/
-           return new bookResponse(
+            return new bookResponse(
                     book.getIdBook(),
                     false,
                     book.getName(),
                     book.getDescription(),
                     book.getAuthor().getFirstName() + " " + book.getAuthor().getLastName() + " " + book.getAuthor().getPatronymic(),
-                   book.getGenre().getName(),
-                   "https://www.googleapis.com/books/v1/volumes?q=" + book.getName()
+                    book.getGenre().getName(),
+                    "https://www.googleapis.com/books/v1/volumes?q=" + book.getName()
             );
         }).collect(Collectors.toList());
 
@@ -125,19 +124,10 @@ public class BookController {
 
     @GetMapping("/cards/getImg/{id}")
     public ResponseEntity<byte[]> getFile(@PathVariable String id) {
-            Book book = bookService.getFile(Long.parseLong(id));
-
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + book.getName() + ".jpg\"")
-                    .body(book.getImage());
-    }
-
-    @GetMapping("/cards/getBook/{id}")
-    public ResponseEntity<byte[]> getBook(@PathVariable Long id) {
-        Book book = bookService.getFile(id);
+        Book book = bookService.getFile(Long.parseLong(id));
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + book.getName() + ".pdf\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + book.getName() + ".jpg\"")
                 .body(book.getImage());
     }
 
@@ -147,7 +137,7 @@ public class BookController {
         Book book = bookService.getBookById(id);
         boolean flag = book.imageIsExist();
         bookResponse files = null;
-        if(flag) {
+        if (flag) {
             String fileDownloadUri = ServletUriComponentsBuilder
                     .fromCurrentContextPath()
                     .path("/cards/getImg/")
@@ -176,6 +166,27 @@ public class BookController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(files);
+    }
+
+
+    @Transactional
+    @GetMapping("/book/downloadBookContent/{idUser}/{idBook}")
+    public ResponseEntity<byte[]> getBookContent(@PathVariable Long idUser, @PathVariable Long idBook) {
+
+        Book book = bookService.getFile(idBook);
+        User user = userService.findUserById(idUser);
+
+        try {
+            user.addBook(book);
+            userService.saveUser(user);
+        } catch (Exception ex) {
+            System.out.println("Ошибка! Подробнее: " + ex.getMessage());
+        }
+
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + book.getName() + ".pdf\"")
+                .body(book.getContent());
     }
 
 }

@@ -5,6 +5,8 @@ import com.mephi.library.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
 public class UserService {
 
@@ -17,6 +19,14 @@ public class UserService {
 
     public User findUserByName(String name){
         return userRepository.findByNameCustomQuery(name);
+    }
+
+    public User findUserById(Long idUser) {
+        return  userRepository.findById(idUser).get();
+    }
+
+    public void saveUser(User user) {
+        userRepository.save(user);
     }
 
     public User createUser(User user){
