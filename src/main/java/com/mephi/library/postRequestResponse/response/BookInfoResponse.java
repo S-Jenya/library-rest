@@ -57,4 +57,36 @@ public class BookInfoResponse {
     public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public boolean isFromData() {
+        return fromData;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
 }

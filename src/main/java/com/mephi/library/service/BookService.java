@@ -36,7 +36,7 @@ public class BookService {
         return bookRepository.findById(id).get();
     }
 
-    public BookDB getBookDataById(Long id) {
+    public BookDB getBookFoCards(Long id) {
         return bookRepository.findBookByIdCustomQuery(id);
     }
 

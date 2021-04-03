@@ -13,8 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -80,10 +79,10 @@ public class BookController {
     }*/
 
     // НЕ формируем ссылку на картинку
-    @GetMapping("/cards/getListCardsTwo")
+    /*@GetMapping("/cards/getListCardsTwo")
     public ResponseEntity<List<BookInfoResponse>> getListCardsTwo() {
         List<BookInfoResponse> files = bookService.getAllBook().map(book -> {
-           /* String url = "https://www.googleapis.com/books/v1/volumes?q=" + book.getName();
+           *//* String url = "https://www.googleapis.com/books/v1/volumes?q=" + book.getName();
             HttpURLConnection connection = null;
             try {
                 connection = (HttpURLConnection) new URL(url).openConnection();
@@ -106,7 +105,7 @@ public class BookController {
                 }
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
-            }*/
+            }*//*
             return new BookInfoResponse(
                     book.getIdBook(),
                     false,
@@ -120,7 +119,7 @@ public class BookController {
         }).collect(Collectors.toList());
 
         return ResponseEntity.status(HttpStatus.OK).body(files);
-    }
+    }*/
 
     @GetMapping("/cards/getImg/{id}")
     public ResponseEntity<byte[]> getFile(@PathVariable String id) {
@@ -136,7 +135,12 @@ public class BookController {
         Book book = bookService.getBookById(id);
         List<Comment> comments = commentService.getCommentByBookId(book);
         boolean flag = book.imageIsExist();
+        List<String> comm = new ArrayList<String>();
+        for(Comment comment: comments) {
+            comm.add(comment.getText());
+        }
         BookInfoResponse files = null;
+        Map<String, Object> map = new HashMap<>();
         if (flag) {
             String fileDownloadUri = ServletUriComponentsBuilder
                     .fromCurrentContextPath()
