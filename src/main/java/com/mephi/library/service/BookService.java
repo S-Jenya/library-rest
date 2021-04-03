@@ -24,6 +24,10 @@ public class BookService {
         bookRepository.save(book);
     }
 
+    public void delBook(Book book) {
+        bookRepository.delete(book);
+    }
+
     public Stream<Book> getAllBook() {
         return bookRepository.findAll().stream();
     }

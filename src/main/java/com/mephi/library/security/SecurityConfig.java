@@ -66,6 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .antMatchers("/getGenres").permitAll()
                 .antMatchers("/registration/createUser").permitAll()
                 .antMatchers("/admin/**").hasAuthority("ADMIN")
+                .antMatchers("/comment/**").hasAnyAuthority("ADMIN", "USER")
                 .anyRequest().authenticated().and().
                 exceptionHandling().and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

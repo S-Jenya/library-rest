@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -38,6 +39,14 @@ public class Book {
     @JoinColumn(name = "idAuthor", nullable = false)
     private Author author;
 
+    @ManyToMany(cascade = CascadeType.PERSIST, mappedBy = "books", fetch = FetchType.EAGER)
+    @JsonIgnore
+    private List<User> user;
+
+    @OneToMany(mappedBy = "book", fetch = FetchType.EAGER)
+    @JsonIgnore
+    private List<Comment> comments;
+
     public boolean imageIsExist() {
         if(this.getImage() == null) {
             return false;
@@ -46,9 +55,8 @@ public class Book {
         }
     }
 
-    /*@ManyToMany(cascade = { CascadeType.ALL },
-            fetch = FetchType.EAGER,
-            mappedBy = "myUser")*/
-//    @JsonIgnore
-//    private User user;
+    public  void clearUserList() {
+        this.user.clear();
+    }
+
 }

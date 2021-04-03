@@ -1,14 +1,10 @@
 package com.mephi.library.controller;
 
-import com.mephi.library.model.Author;
-import com.mephi.library.model.Book;
-import com.mephi.library.model.Genre;
-import com.mephi.library.model.User;
+import com.mephi.library.model.*;
+import com.mephi.library.postRequestResponse.response.BookInfoResponse;
+import com.mephi.library.postRequestResponse.response.MessageResponse;
 import com.mephi.library.postRequestResponse.response.bookResponse;
-import com.mephi.library.service.AuthorService;
-import com.mephi.library.service.BookService;
-import com.mephi.library.service.GenreService;
-import com.mephi.library.service.UserService;
+import com.mephi.library.service.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -27,12 +24,14 @@ public class BookController {
     private final AuthorService authorService;
     private final BookService bookService;
     private final UserService userService;
+    private final CommentService commentService;
 
-    public BookController(GenreService genreService, AuthorService authorService, BookService bookService, UserService userService) {
+    public BookController(GenreService genreService, AuthorService authorService, BookService bookService, UserService userService, CommentService commentService) {
         this.genreService = genreService;
         this.authorService = authorService;
         this.bookService = bookService;
         this.userService = userService;
+        this.commentService = commentService;
     }
 
     @PostMapping(value = "/admin/uploadBook")
@@ -82,8 +81,8 @@ public class BookController {
 
     // НЕ формируем ссылку на картинку
     @GetMapping("/cards/getListCardsTwo")
-    public ResponseEntity<List<bookResponse>> getListCardsTwo() {
-        List<bookResponse> files = bookService.getAllBook().map(book -> {
+    public ResponseEntity<List<BookInfoResponse>> getListCardsTwo() {
+        List<BookInfoResponse> files = bookService.getAllBook().map(book -> {
            /* String url = "https://www.googleapis.com/books/v1/volumes?q=" + book.getName();
             HttpURLConnection connection = null;
             try {
@@ -108,14 +107,15 @@ public class BookController {
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }*/
-            return new bookResponse(
+            return new BookInfoResponse(
                     book.getIdBook(),
                     false,
                     book.getName(),
                     book.getDescription(),
                     book.getAuthor().getFirstName() + " " + book.getAuthor().getLastName() + " " + book.getAuthor().getPatronymic(),
                     book.getGenre().getName(),
-                    "https://www.googleapis.com/books/v1/volumes?q=" + book.getName()
+                    "https://www.googleapis.com/books/v1/volumes?q=" + book.getName(),
+                    book.getComments()
             );
         }).collect(Collectors.toList());
 
@@ -132,11 +132,11 @@ public class BookController {
     }
 
     @GetMapping("/book/getInfo/{id}")
-    public ResponseEntity<bookResponse> getBookInfo(@PathVariable Long id) {
-//        BookDB book = bookService.getBookDataById(id);
+    public ResponseEntity<BookInfoResponse> getBookInfo(@PathVariable Long id) {
         Book book = bookService.getBookById(id);
+        List<Comment> comments = commentService.getCommentByBookId(book);
         boolean flag = book.imageIsExist();
-        bookResponse files = null;
+        BookInfoResponse files = null;
         if (flag) {
             String fileDownloadUri = ServletUriComponentsBuilder
                     .fromCurrentContextPath()
@@ -144,24 +144,26 @@ public class BookController {
                     .path(book.getIdBook().toString())
                     .toUriString();
 
-            files = new bookResponse(
+            files = new BookInfoResponse(
                     id,
                     true,
                     book.getName(),
                     book.getDescription(),
                     book.getAuthor().getLastName() + " " + book.getAuthor().getFirstName() + " " + book.getAuthor().getPatronymic(),
                     book.getGenre().getName(),
-                    fileDownloadUri
+                    fileDownloadUri,
+                    comments
             );
         } else {
-            files = new bookResponse(
+            files = new BookInfoResponse(
                     id,
                     false,
                     book.getName(),
                     book.getDescription(),
                     book.getAuthor().getLastName() + " " + book.getAuthor().getFirstName() + " " + book.getAuthor().getPatronymic(),
                     book.getGenre().getName(),
-                    "https://www.googleapis.com/books/v1/volumes?q=" + book.getName()
+                    "https://www.googleapis.com/books/v1/volumes?q=" + book.getName(),
+                    comments
             );
         }
 
@@ -187,6 +189,21 @@ public class BookController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + book.getName() + ".pdf\"")
                 .body(book.getContent());
+    }
+
+    @DeleteMapping(value = "/admin/book/deleteBook/{id}")
+    public ResponseEntity<?> deleteBook(@PathVariable Long id) {
+        Book book;
+        try {
+            book = bookService.getBookById(id);
+            book.clearUserList();
+            bookService.saveBook(book);
+            bookService.delBook(book);
+        } catch (Exception ex) {
+            System.out.println("Ошибка! Подробнее: " + ex.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse("Ошибка! Подробнее: " + ex.getMessage()));
+        }
+        return ResponseEntity.ok().body(new MessageResponse("Книга: \"" + book.getName() + "\" успешно удалёна"));
     }
 
 }

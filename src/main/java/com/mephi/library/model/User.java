@@ -1,10 +1,12 @@
 package com.mephi.library.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -38,13 +40,17 @@ public class User {
     @JoinColumn(name = "idRole", nullable = false)
     private Role role;
 
-    @ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = { CascadeType.PERSIST }, fetch = FetchType.EAGER)
     @JoinTable(
             name = "UserBook",
             joinColumns = { @JoinColumn(name = "idUser") },
             inverseJoinColumns = { @JoinColumn(name = "idBook") }
     )
     private Set<Book> books;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Comment> comments;
 
     public void setRole(Role role) {
         this.role = role;
