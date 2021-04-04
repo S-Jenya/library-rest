@@ -79,10 +79,10 @@ public class BookController {
     }*/
 
     // НЕ формируем ссылку на картинку
-    /*@GetMapping("/cards/getListCardsTwo")
+    @GetMapping("/cards/getListCardsTwo")
     public ResponseEntity<List<BookInfoResponse>> getListCardsTwo() {
         List<BookInfoResponse> files = bookService.getAllBook().map(book -> {
-           *//* String url = "https://www.googleapis.com/books/v1/volumes?q=" + book.getName();
+           /* String url = "https://www.googleapis.com/books/v1/volumes?q=" + book.getName();
             HttpURLConnection connection = null;
             try {
                 connection = (HttpURLConnection) new URL(url).openConnection();
@@ -105,7 +105,7 @@ public class BookController {
                 }
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
-            }*//*
+            }*/
             return new BookInfoResponse(
                     book.getIdBook(),
                     false,
@@ -119,7 +119,7 @@ public class BookController {
         }).collect(Collectors.toList());
 
         return ResponseEntity.status(HttpStatus.OK).body(files);
-    }*/
+    }
 
     @GetMapping("/cards/getImg/{id}")
     public ResponseEntity<byte[]> getFile(@PathVariable String id) {

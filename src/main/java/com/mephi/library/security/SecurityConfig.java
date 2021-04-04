@@ -59,14 +59,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors().and().csrf().disable()
                 .authorizeRequests().antMatchers("/authenticate").permitAll()
-                .antMatchers("/usertest").permitAll()
-                .antMatchers("/admintest").permitAll()
                 .antMatchers("/cards/**").permitAll()
                 .antMatchers("/book/**").permitAll()
                 .antMatchers("/getGenres").permitAll()
                 .antMatchers("/registration/createUser").permitAll()
                 .antMatchers("/admin/**").hasAuthority("ADMIN")
                 .antMatchers("/comment/**").hasAnyAuthority("ADMIN", "USER")
+                .antMatchers("/user/**").hasAnyAuthority("ADMIN", "USER")
                 .anyRequest().authenticated().and().
                 exceptionHandling().and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

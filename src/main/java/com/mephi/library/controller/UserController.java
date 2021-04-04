@@ -3,10 +3,8 @@ package com.mephi.library.controller;
 import com.mephi.library.model.Role;
 import com.mephi.library.model.User;
 import com.mephi.library.postRequestResponse.Data;
-import com.mephi.library.postRequestResponse.response.UserInfo;
 import com.mephi.library.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,15 +44,4 @@ public class UserController {
         adminService.updateRoleName(data.getName(), data.getId());
     }
 
-    @GetMapping("/usertest")
-    @PreAuthorize("hasRole('USER')")
-    public String moderatorAccess() {
-        return "USER Board.";
-    }
-
-    @GetMapping("/admintest")
-    @PreAuthorize("hasRole('ADMIN')")
-    public String adminAccess() {
-        return "ADMIN Board.";
-    }
 }

@@ -48,7 +48,7 @@ public class User {
     )
     private Set<Book> books;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Comment> comments;
 
