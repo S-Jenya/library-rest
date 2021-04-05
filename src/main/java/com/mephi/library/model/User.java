@@ -40,7 +40,7 @@ public class User {
     @JoinColumn(name = "idRole", nullable = false)
     private Role role;
 
-    @ManyToMany(cascade = { CascadeType.PERSIST }, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
             name = "UserBook",
             joinColumns = { @JoinColumn(name = "idUser") },
@@ -58,5 +58,9 @@ public class User {
 
     public void addBook(Book book) {
         this.books.add(book);
+    }
+
+    public void clearBookList() {
+        this.books.clear();
     }
 }

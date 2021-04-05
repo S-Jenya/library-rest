@@ -24,4 +24,12 @@ public class CommentService {
     public List<Comment> getCommentByBookId(Book book) {
         return commentRepository.findAllByBook(book);
     }
+
+    public List<Comment> findListCommentsByIdBook(Long idBook) {
+        return commentRepository.findListCommentsByIdBook(idBook);
+    }
+
+    public void deleteCommentById(Long idComment) {
+        commentRepository.deleteById(idComment);
+    }
 }

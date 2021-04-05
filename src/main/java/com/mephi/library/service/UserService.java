@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -31,5 +32,13 @@ public class UserService {
 
     public User createUser(User user){
         return userRepository.save(user);
+    }
+
+    public List<User> findListUserBooks(Long idBook) {
+        return userRepository.findListUserBooks(idBook);
+    }
+
+    public List<User> findListUserComments(Long idBook) {
+        return userRepository.findListUserComments(idBook);
     }
 }

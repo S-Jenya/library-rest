@@ -136,7 +136,7 @@ public class BookController {
         List<Comment> comments = commentService.getCommentByBookId(book);
         boolean flag = book.imageIsExist();
         List<String> comm = new ArrayList<String>();
-        for(Comment comment: comments) {
+        for (Comment comment : comments) {
             comm.add(comment.getText());
         }
         BookInfoResponse files = null;
@@ -199,9 +199,21 @@ public class BookController {
     public ResponseEntity<?> deleteBook(@PathVariable Long id) {
         Book book;
         try {
+            List<User> user = userService.findListUserBooks(id);
+            for (User userList: user){
+                for (Book bookItem: userList.getBooks()){
+                    if(bookItem.getIdBook().equals(id)) {
+                        userList.getBooks().remove(bookItem);
+                        userService.saveUser(userList);
+                    }
+                }
+            }
+            List<Comment> comments = commentService.findListCommentsByIdBook(id);
+            for(Comment commentItemId: comments) {
+                commentService.deleteCommentById(commentItemId.getIdComment());
+            }
+
             book = bookService.getBookById(id);
-            book.clearUserList();
-            bookService.saveBook(book);
             bookService.delBook(book);
         } catch (Exception ex) {
             System.out.println("Ошибка! Подробнее: " + ex.getMessage());
