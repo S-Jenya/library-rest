@@ -13,11 +13,13 @@ import java.util.stream.Stream;
 @Service
 public class BookService {
     private final BookRepository bookRepository;
+    private final GenreService genreService;
 //    private final BookDataRepository bookDataRepository;
 
-    public BookService(BookRepository bookRepository) {
+    public BookService(BookRepository bookRepository, GenreService genreService) {
         this.bookRepository = bookRepository;
 //        this.bookDataRepository = bookDataRepository;
+        this.genreService = genreService;
     }
 
     public void saveBook(Book book) {
@@ -51,6 +53,20 @@ public class BookService {
 
     public Long countBookByGenre(Genre genre) {
         return bookRepository.countBookByGenre(genre);
+    }
+
+    public Stream<Book> FilterBook(String mode, String strSearch) {
+        Stream<Book> books = null;
+        if(mode.equals("all")) {
+            books = bookRepository.findAll().stream();
+        }
+        if(mode.equals("byName")) {
+            books = bookRepository.findBookByNameContaining(strSearch).stream();
+        } else if (mode.equals("byGenreName")) {
+            Genre genre = genreService.findGenreByName(strSearch);
+            books = bookRepository.findBookByGenre(genre).stream();
+        }
+        return books;
     }
 
     public Long countBookByAuthor(Author author) {

@@ -33,13 +33,12 @@ public class BookController {
         this.commentService = commentService;
     }
 
-    @PostMapping(value = "/admin/uploadBook")
-    public void UploadBookOne(
+    @PostMapping(value = "/admin/uploadBookInetImage")
+    public void UploadBookInetImage(
             @RequestParam(name = "name") String name,
             @RequestParam(name = "description") String description,
             @RequestParam(name = "genre") Long idGenre,
             @RequestParam(name = "author") Long idAuthor,
-//            @RequestParam(name = "fileImage") MultipartFile img,
             @RequestParam(name = "fileContent") MultipartFile cont) {
         try {
             Book book = new Book();
@@ -49,7 +48,6 @@ public class BookController {
             book.setGenre(genre);
             Author author = authorService.getAuthorById(idAuthor);
             book.setAuthor(author);
-//            book.setImage(img.getBytes());
             book.setContent(cont.getBytes());
             bookService.saveBook(book);
         } catch (Exception ex) {
@@ -57,68 +55,28 @@ public class BookController {
         }
     }
 
-    // Контроллер формирует ссылку на картинку
-   /* @GetMapping("/cards/getListCards")
-    public ResponseEntity<List<bookResponse>> getListCards() {
-        List<bookResponse> files = bookService.getAllBook().map(book -> {
-            String fileDownloadUri = ServletUriComponentsBuilder
-                    .fromCurrentContextPath()
-                    .path("/cards/getImg/")
-                    .path(book.getIdBook().toString())
-                    .toUriString();
-
-            return new bookResponse(
-                    book.getIdBook(),
-                    book.getName(),
-                     book.getAuthor().getLastName() + " " + book.getAuthor().getFirstName() + " " + book.getAuthor().getPatronymic()
-                    , fileDownloadUri
-            );
-        }).collect(Collectors.toList());
-
-        return ResponseEntity.status(HttpStatus.OK).body(files);
-    }*/
-
-    // НЕ формируем ссылку на картинку
-    @GetMapping("/cards/getListCardsTwo")
-    public ResponseEntity<List<BookInfoResponse>> getListCardsTwo() {
-        List<BookInfoResponse> files = bookService.getAllBook().map(book -> {
-           /* String url = "https://www.googleapis.com/books/v1/volumes?q=" + book.getName();
-            HttpURLConnection connection = null;
-            try {
-                connection = (HttpURLConnection) new URL(url).openConnection();
-                connection.setRequestMethod("GET");
-                connection.setUseCaches(false);
-                connection.setConnectTimeout(250);
-                connection.setReadTimeout(250);
-                connection.connect();
-                StringBuilder sb = new StringBuilder();
-                if(HttpURLConnection.HTTP_OK == connection.getResponseCode()){
-                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                    String line;
-                    while((line = in.readLine()) != null) {
-                        sb.append(line);
-                        sb.append("\n");
-                    }
-                    System.out.println(sb.toString());
-                } else {
-                    System.out.println("Faild: " + connection.getResponseCode() + ", " + connection.getResponseMessage());
-                }
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }*/
-            return new BookInfoResponse(
-                    book.getIdBook(),
-                    false,
-                    book.getName(),
-                    book.getDescription(),
-                    book.getAuthor().getFirstName() + " " + book.getAuthor().getLastName() + " " + book.getAuthor().getPatronymic(),
-                    book.getGenre().getName(),
-                    "https://www.googleapis.com/books/v1/volumes?q=" + book.getName(),
-                    book.getComments()
-            );
-        }).collect(Collectors.toList());
-
-        return ResponseEntity.status(HttpStatus.OK).body(files);
+    @PostMapping(value = "/admin/uploadBookUserImage")
+    public void UploadBookUserImage(
+            @RequestParam(name = "name") String name,
+            @RequestParam(name = "description") String description,
+            @RequestParam(name = "genre") Long idGenre,
+            @RequestParam(name = "author") Long idAuthor,
+            @RequestParam(name = "fileImage") MultipartFile img,
+            @RequestParam(name = "fileContent") MultipartFile cont) {
+        try {
+            Book book = new Book();
+            book.setName(name);
+            book.setDescription(description);
+            Genre genre = genreService.findGenreById(idGenre);
+            book.setGenre(genre);
+            Author author = authorService.getAuthorById(idAuthor);
+            book.setAuthor(author);
+            book.setImage(img.getBytes());
+            book.setContent(cont.getBytes());
+            bookService.saveBook(book);
+        } catch (Exception ex) {
+            System.out.println("Ошибка! Подробнее: " + ex.getMessage());
+        }
     }
 
     @GetMapping("/cards/getImg/{id}")
@@ -220,6 +178,42 @@ public class BookController {
             return ResponseEntity.badRequest().body(new MessageResponse("Ошибка! Подробнее: " + ex.getMessage()));
         }
         return ResponseEntity.ok().body(new MessageResponse("Книга: \"" + book.getName() + "\" успешно удалёна"));
+    }
+
+    @PostMapping(value = "/admin/updBookData")
+    public ResponseEntity<?> updBookData(
+            @RequestParam(name = "idBook") Long idBook,
+            @RequestParam(name = "name") String name,
+            @RequestParam(name = "description") String description,
+            @RequestParam(name = "genre") Long idGenre,
+            @RequestParam(name = "author") Long idAuthor,
+            @RequestParam(name = "imgFromEthernet", required = false) String imgFromEthernet,
+            @RequestParam(name = "fileImage", required = false) MultipartFile img,
+            @RequestParam(name = "fileContent", required = false) MultipartFile cont) {
+        try {
+            Book book = bookService.getBookById(idBook);
+            book.setName(name);
+            book.setDescription(description);
+            Genre genre = genreService.findGenreById(idGenre);
+            book.setGenre(genre);
+            Author author = authorService.getAuthorById(idAuthor);
+            book.setAuthor(author);
+            if(imgFromEthernet != null) {
+                book.setImage(null);
+            }
+            if(img != null) {
+                book.setImage(img.getBytes());
+            }
+            if(cont != null) {
+                book.setContent(cont.getBytes());
+            }
+            bookService.saveBook(book);
+        } catch (Exception ex) {
+            String strEx = ex.getCause().getCause().getMessage();
+            return ResponseEntity.badRequest().body(new MessageResponse(strEx));
+        }
+
+        return ResponseEntity.ok().body(new MessageResponse("Унига успешно обновлена"));
     }
 
 }

@@ -3,11 +3,13 @@ package com.mephi.library.controller;
 import com.mephi.library.model.Book;
 import com.mephi.library.model.Comment;
 import com.mephi.library.model.User;
+import com.mephi.library.postRequestResponse.request.CommentEditRequest;
 import com.mephi.library.postRequestResponse.request.CommentRequest;
 import com.mephi.library.postRequestResponse.response.MessageResponse;
 import com.mephi.library.service.BookService;
 import com.mephi.library.service.CommentService;
 import com.mephi.library.service.UserService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,5 +44,31 @@ public class CommentController {
         }
 
         return ResponseEntity.ok().body(new MessageResponse("Комментарий успешно добавлен"));
+    }
+
+    @RequestMapping(value = "/comment/editComment", method = RequestMethod.POST)
+    public ResponseEntity<?> editComment(@RequestBody CommentEditRequest data) {
+        try {
+            Comment comment = commentService.getCommentById(data.getIdComment());
+            comment.setText(data.getText());
+            commentService.saveComment(comment);
+        } catch (Exception ex) {
+            String strEx = ex.getCause().getCause().getMessage();
+            return ResponseEntity.badRequest().body(new MessageResponse(strEx));
+        }
+
+        return ResponseEntity.ok().body(new MessageResponse("Комментарий успешно обновлён"));
+    }
+
+    @GetMapping("/comment/delComment/{id}")
+    public ResponseEntity<?> getFile(@PathVariable Long id) {
+        try {
+            commentService.deleteCommentById(id);
+        } catch (Exception ex) {
+            String strEx = ex.getCause().getCause().getMessage();
+            return ResponseEntity.badRequest().body(new MessageResponse(strEx));
+        }
+
+        return ResponseEntity.ok().body(new MessageResponse("Комментарий успешно удалён"));
     }
 }
