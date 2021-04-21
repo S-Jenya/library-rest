@@ -23,7 +23,7 @@ public class UserAuthService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
 
-        Optional<User> user = Optional.ofNullable(repository.findByNameCustomQuery(name));
+        Optional<User> user = Optional.ofNullable(repository.findUserByLogin(name));
 
         user.orElseThrow(() ->
                 new UsernameNotFoundException("Пользователь " + name +" не найден!"));

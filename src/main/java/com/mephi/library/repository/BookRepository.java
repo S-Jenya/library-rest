@@ -16,6 +16,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     Long countBookByAuthor(Author author);
     List<Book> findBookByNameContaining(String name);
     List<Book> findBookByGenre(Genre genre);
+    List<Book> findBookByAuthor(Author author);
 
     @Query("select b.image from Book b where b.idBook = ?1")
     byte findBookImageByIdBook(Long idBook);

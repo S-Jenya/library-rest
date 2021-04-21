@@ -5,7 +5,6 @@ import com.mephi.library.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -18,10 +17,20 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User findUserByName(String name){
-        return userRepository.findByNameCustomQuery(name);
+    public User findUserByLogin(Long idUser, String name){
+        return userRepository.findUserByLoginCustomQuery( name);
     }
 
+    public User findUserByEmail(Long idUser, String email) {
+        return userRepository.findUserByEmailCustomQuery(email);
+    }
+
+    public Long countUserByName(String name) {
+        return userRepository.countUserByName(name);
+    }
+    public Long countUserByEmail(String email) {
+        return userRepository.countUserByEmail(email);
+    }
     public User findUserById(Long idUser) {
         return  userRepository.findById(idUser).get();
     }

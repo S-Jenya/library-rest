@@ -8,12 +8,17 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Long> {
+    User findUserByLogin(String s);
+    User findUserByEmail(String s);
+    Long countUserByName(String name);
+    Long countUserByEmail(String email);
+
 
     @Query("select u from User u where u.login = ?1")
-    User findByNameCustomQuery(String s);
+    User findUserByLoginCustomQuery(String name);
 
-    @Query("select u.idUser, u.login, u.name, u.role from User u")
-    List<UserInfo> findAllUserCustomQuery();
+    @Query("select u from User u where u.email = ?1")
+    User findUserByEmailCustomQuery(String email);
 
     @Query("SELECT u FROM User u JOIN u.books b WHERE b.idBook = ?1")
     List<User> findListUserBooks(Long idBook);

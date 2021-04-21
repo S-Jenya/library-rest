@@ -1,6 +1,8 @@
 package com.mephi.library.controller;
 
 import com.mephi.library.model.Author;
+import com.mephi.library.model.Book;
+import com.mephi.library.model.Genre;
 import com.mephi.library.postRequestResponse.request.AuthorAddRequest;
 import com.mephi.library.postRequestResponse.response.MessageResponse;
 import com.mephi.library.service.AuthorService;
@@ -23,6 +25,12 @@ public class AuthorController {
     @GetMapping("/admin/getAuthors")
     public List<Author> getAuthors() {
         return authorService.findAllAuthors();
+    }
+
+    @GetMapping("/admin/getBookByAuthor/{idAuthor}")
+    public List<Book> getBookByAuthor(@PathVariable Long idAuthor) {
+        Author author = authorService.getAuthorById(idAuthor);
+        return bookService.getBookByAuthor(author);
     }
 
     @RequestMapping(value = "/admin/addAuthor", method = RequestMethod.POST)

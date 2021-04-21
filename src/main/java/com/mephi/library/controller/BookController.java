@@ -33,6 +33,12 @@ public class BookController {
         this.commentService = commentService;
     }
 
+    @GetMapping("/admin/getBookByGenre/{idGenre}")
+    public List<Book> getBookByGenre(@PathVariable Long idGenre) {
+        Genre genre = genreService.findGenreById(idGenre);
+        return bookService.getBookByGenre(genre);
+    }
+
     @PostMapping(value = "/admin/uploadBookInetImage")
     public void UploadBookInetImage(
             @RequestParam(name = "name") String name,

@@ -23,7 +23,7 @@ public class ProfileController {
         this.userService = userService;
     }
 
-    @Transactional
+//    @Transactional
     @GetMapping("/user/getUserData/{idUser}")
     public Map<String, Object> getUserData(@PathVariable Long idUser) {
         User user = userService.findUserById(idUser);

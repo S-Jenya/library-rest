@@ -8,6 +8,7 @@ import com.mephi.library.postRequestResponse.DB.BookDB;
 import com.mephi.library.repository.BookRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 @Service
@@ -49,6 +50,14 @@ public class BookService {
     public boolean imageIsExist(Long idBook) {
         byte data = bookRepository.findBookImageByIdBook(idBook);
         return false;
+    }
+
+    public List<Book> getBookByGenre(Genre genre) {
+        return bookRepository.findBookByGenre(genre);
+    }
+
+    public List<Book> getBookByAuthor(Author author) {
+        return bookRepository.findBookByAuthor(author);
     }
 
     public Long countBookByGenre(Genre genre) {
