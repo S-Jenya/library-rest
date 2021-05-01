@@ -2,17 +2,24 @@ package com.mephi.library.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @Entity
 @Table(
         name = "Book",
         uniqueConstraints = {
-                @UniqueConstraint(name = "book_name_unique", columnNames = "name")}
+                @UniqueConstraint(
+                        name = "book_name_year_unique",
+                        columnNames = {"name", "year"}
+                )
+        }
 )
 public class Book {
     @Id
@@ -20,9 +27,17 @@ public class Book {
     @Column(name = "idBook")
     private Long idBook;
 
-    @Column(name = "name")
+    @NotBlank(message = "Поле \"name\" не может быть пустым")
+    @Column(name = "name", length = 150)
+    @Size(min = 1, max = 150)
     private String name;
 
+    @NotNull(message = "Поле \"year\" не может быть пустым")
+    @Column(name = "year")
+    @Range(min=0, max=3000)
+    private Integer year;
+
+    @Size(min = 1, max = 255)
     private String description;
 
     @Lob
@@ -48,14 +63,14 @@ public class Book {
     private List<Comment> comments;
 
     public boolean imageIsExist() {
-        if(this.getImage() == null) {
+        if (this.getImage() == null) {
             return false;
         } else {
             return true;
         }
     }
 
-    public  void clearUserList() {
+    public void clearUserList() {
         this.user.clear();
     }
 

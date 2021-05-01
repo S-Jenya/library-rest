@@ -2,10 +2,10 @@ package com.mephi.library.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Set;
 
@@ -24,16 +24,24 @@ public class User {
     @Column(name = "idUser")
     private Long idUser;
 
-    @Column(name = "name")
+    @NotBlank(message = "Поле \"name\" не может быть пустым")
+    @Column(name = "name", length = 30)
+    @Size(min = 1, max = 30)
     private String name;
 
-    @Column(name = "email")
+    @NotBlank(message = "Поле \"email\" не может быть пустым")
+    @Column(name = "email", length = 60)
+    @Size(min = 1, max = 60)
     private String email;
 
-    @Column(name = "login")
+    @NotBlank(message = "Поле \"login\" не может быть пустым")
+    @Column(name = "login", length = 30)
+    @Size(min = 1, max = 30)
     private String login;
 
-    @Column(name = "password")
+    @NotBlank(message = "Поле \"password\" не может быть пустым")
+    @Column(name = "password", length = 255)
+    @Size(min = 4, max = 255)
     private String password;
 
     @ManyToOne
@@ -42,7 +50,7 @@ public class User {
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
-            name = "UserBook",
+            name = "downloads",
             joinColumns = { @JoinColumn(name = "idUser") },
             inverseJoinColumns = { @JoinColumn(name = "idBook") }
     )
@@ -58,9 +66,5 @@ public class User {
 
     public void addBook(Book book) {
         this.books.add(book);
-    }
-
-    public void clearBookList() {
-        this.books.clear();
     }
 }

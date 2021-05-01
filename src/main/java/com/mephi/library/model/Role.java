@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Data
@@ -20,8 +21,9 @@ public class Role {
     @Column(name = "idRole")
     private Long idRole;
 
-    @NotBlank(message = "Поле \"firstName\" не может быть пустым")
-    @Column(name = "name")
+    @NotBlank(message = "Поле \"name\" не может быть пустым")
+    @Column(name = "name", length = 30)
+    @Size(min = 1, max = 30)
     private String name;
 
     @OneToMany(

@@ -42,6 +42,7 @@ public class BookController {
     @PostMapping(value = "/admin/uploadBookInetImage")
     public void UploadBookInetImage(
             @RequestParam(name = "name") String name,
+            @RequestParam(name = "year") Integer year,
             @RequestParam(name = "description") String description,
             @RequestParam(name = "genre") Long idGenre,
             @RequestParam(name = "author") Long idAuthor,
@@ -49,6 +50,7 @@ public class BookController {
         try {
             Book book = new Book();
             book.setName(name);
+            book.setYear(year);
             book.setDescription(description);
             Genre genre = genreService.findGenreById(idGenre);
             book.setGenre(genre);
@@ -64,6 +66,7 @@ public class BookController {
     @PostMapping(value = "/admin/uploadBookUserImage")
     public void UploadBookUserImage(
             @RequestParam(name = "name") String name,
+            @RequestParam(name = "year") Integer year,
             @RequestParam(name = "description") String description,
             @RequestParam(name = "genre") Long idGenre,
             @RequestParam(name = "author") Long idAuthor,
@@ -72,6 +75,7 @@ public class BookController {
         try {
             Book book = new Book();
             book.setName(name);
+            book.setYear(year);
             book.setDescription(description);
             Genre genre = genreService.findGenreById(idGenre);
             book.setGenre(genre);
@@ -116,6 +120,7 @@ public class BookController {
                     id,
                     true,
                     book.getName(),
+                    book.getYear(),
                     book.getDescription(),
                     book.getAuthor().getLastName() + " " + book.getAuthor().getFirstName() + " " + book.getAuthor().getPatronymic(),
                     book.getGenre().getName(),
@@ -127,6 +132,7 @@ public class BookController {
                     id,
                     false,
                     book.getName(),
+                    book.getYear(),
                     book.getDescription(),
                     book.getAuthor().getLastName() + " " + book.getAuthor().getFirstName() + " " + book.getAuthor().getPatronymic(),
                     book.getGenre().getName(),
@@ -190,6 +196,7 @@ public class BookController {
     public ResponseEntity<?> updBookData(
             @RequestParam(name = "idBook") Long idBook,
             @RequestParam(name = "name") String name,
+            @RequestParam(name = "year") Integer year,
             @RequestParam(name = "description") String description,
             @RequestParam(name = "genre") Long idGenre,
             @RequestParam(name = "author") Long idAuthor,
@@ -199,6 +206,7 @@ public class BookController {
         try {
             Book book = bookService.getBookById(idBook);
             book.setName(name);
+            book.setYear(year);
             book.setDescription(description);
             Genre genre = genreService.findGenreById(idGenre);
             book.setGenre(genre);

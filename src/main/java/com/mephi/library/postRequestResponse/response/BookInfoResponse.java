@@ -9,16 +9,18 @@ public class BookInfoResponse {
     private Long id;
     private boolean fromData;
     private String name;
+    private Integer year;
     private String description;
     private String author;
     private String genre;
     private String url;
     private List<Comment> comments;
 
-    public BookInfoResponse(Long id, boolean fromData, String name, String description, String author, String genre, String url, List<Comment> comments) {
+    public BookInfoResponse(Long id, boolean fromData, String name, Integer year, String description, String author, String genre, String url, List<Comment> comments) {
         this.id = id;
         this.fromData = fromData;
         this.name = name;
+        this.year = year;
         this.description = description;
         this.author = author;
         this.genre = genre;
@@ -88,5 +90,13 @@ public class BookInfoResponse {
 
     public List<Comment> getComments() {
         return comments;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
     }
 }

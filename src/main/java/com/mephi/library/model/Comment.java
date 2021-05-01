@@ -1,9 +1,9 @@
 package com.mephi.library.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -12,8 +12,6 @@ import java.util.Date;
 @SequenceGenerator(name = "comment_sequence_generator", sequenceName = "comment_sequence", initialValue = 1, allocationSize = 1)
 @Table(name = "comment")
 public class Comment {
-//    @EmbeddedId
-//    UserCommetKey id;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,  generator="comment_sequence_generator")
@@ -21,19 +19,18 @@ public class Comment {
     private Long idComment;
 
     @ManyToOne
-//    @MapsId("idUser")
     @JoinColumn(name = "idUser")
     User user;
 
     @ManyToOne
-//    @MapsId("idBook")
     @JoinColumn(name = "idBook")
     Book book;
 
-    //    @MapsId("date")
+    @Column(length = 11)
     String date;
 
     @Column(name = "text")
+    @Size(min = 1, max = 255)
     String text;
 
     public void setCurrentDate() {
